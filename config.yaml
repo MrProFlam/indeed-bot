@@ -1,0 +1,58 @@
+# Indeed HK auto-apply bot — personal use only.
+# Secrets go in .env, never here.
+
+site:
+  domain: "hk.indeed.com"
+  base_url: "https://hk.indeed.com"
+  # Indeed HK serves both English and Traditional Chinese; filters match both.
+  language: "en"
+
+browser:
+  headless: false          # keep visible: login, captcha and review need a human
+  slow_mo: 0
+  # If Indeed/Cloudflare shows a bot wall, the bot pauses this long so YOU can
+  # clear it in the browser. The bot never solves captchas itself. 0 = abort.
+  challenge_wait_seconds: 180
+  # Best anti-bot option: connect to a real Chrome you launch yourself with
+  # --remote-debugging-port=9222. Set to "" to launch Playwright's own Chromium.
+  cdp_url: "http://127.0.0.1:9222"
+
+search:
+  query: "part time"       # Indeed HK query
+  location: "Hong Kong"
+  max_pages: 2             # ~20 jobs per run (low volume while testing)
+  fromage: 7               # only jobs posted in last 7 days (0 = any)
+  sort: "date"             # date | relevance
+  fetch_job_details: false # optional /viewjob detail fetch for filtering
+
+filters:
+  keywords_include: []     # any match wins; e.g. ["admin", "客服", "data"]
+  keywords_exclude: []     # any match drops
+  min_salary_hkd: 70       # 0 = no minimum
+  include_unknown_salary: false
+  locations: []            # e.g. ["Hong Kong", "Kowloon", "九龍"]
+  indeed_apply_only: true  # skip jobs that redirect to external ATS
+
+limits:
+  max_applications_per_run: 20
+  max_consecutive_failures: 3
+
+delays:
+  apply_action: [3.0, 5.0] # randomized pause before EACH apply action
+  speed_multiplier: 1.0
+
+answers:
+  enabled: true
+  preview_only: false      # --preview-answers sets true: log drafts, don't send
+  provider: "openrouter"
+  model: "inclusionai/ling-3.2-flash:free"
+  profile_file: "profile.txt"
+  max_answer_chars: 400
+  timeout_seconds: 30
+  # Deterministic overrides for common questions (lower-cased substring of question).
+  fallback_map:
+    "authorized to work": "Yes, I am authorized to work in Hong Kong."
+    "work in hong kong": "Yes, I am authorized to work in Hong Kong."
+    "years of experience": "3 years of relevant experience."
+    "notice period": "Immediately available."
+    "salary expectation": "Negotiable based on the role."

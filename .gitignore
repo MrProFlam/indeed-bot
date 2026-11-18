@@ -1,0 +1,11 @@
+.env
+data/
+__pycache__/
+*.pyc
+.pytest_cache/
+profile.txt
+*.log
+dist/
+build/
+*.spec
+.sisyphus/

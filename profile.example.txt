@@ -1,0 +1,13 @@
+# Copy to profile.txt and replace with your own facts. This is used by the AI
+# answerer for screening questions. Do NOT commit profile.txt.
+Name: Your Name
+Email: you@example.com
+Phone: +852 0000 0000
+Location: Hong Kong
+Work authorization: Authorized to work in Hong Kong
+Years of experience: 3
+Skills: administration, customer service, data entry, Microsoft Excel, English, Cantonese, Mandarin
+Education: [your degree / school]
+Availability: Immediate
+Salary expectation: Negotiable
+Notes: [anything else the AI should know about you]

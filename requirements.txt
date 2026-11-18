@@ -1,0 +1,8 @@
+playwright
+PyYAML
+python-dotenv
+rich
+requests
+pytest
+patchright
+pyinstaller
