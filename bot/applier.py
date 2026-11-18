@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import logging
 import re
+import time
 from pathlib import Path
 from urllib.parse import quote_plus
 
@@ -284,6 +285,31 @@ def _fill_questions(w, job: dict, cfg: dict, answers, keyword: str) -> bool:
                 _d(f"NO RESUME OPTION label={label!r}")
             continue
 
+        # Email/newsletter opt-ins are optional marketing, not screening
+        # questions. Never fail an application because of one.
+        if re.search(
+            r"email updates|newsletter|subscribe|marketing (e-?mail|communications?)"
+            r"|promotional (e-?mails?|messages?)|電郵更新|訂閱|接收.*資訊",
+            label,
+            re.I,
+        ):
+            choice = next(
+                (o for o in options if re.search(r"\bno\b|decline|skip|不要|不願|否", o, re.I)),
+                None,
+            )
+            if choice:
+                idx = options.index(choice)
+                try:
+                    w.locator("input, textarea, select").nth(radios[idx]["i"]).check()
+                    _d(f"DECLINE marketing opt-in label={label!r} -> {choice!r}")
+                    changed = True
+                    human_delay(cfg, "apply")
+                except Exception as exc:
+                    _d(f"marketing_decline_error {type(exc).__name__}: {exc}")
+            else:
+                _d(f"SKIP optional marketing opt-in label={label!r}")
+            continue
+
         answer = answers.answer(label, job) if answers else ""
         choice = _match_option(answer, options)
         if choice is None and DECLINE_RE.search(answer or ""):
@@ -309,11 +335,18 @@ def _click_button(w, patterns: list[str], cfg: dict, label: str) -> bool:
     for pat in patterns:
         try:
             btn = w.get_by_role("button", name=re.compile(pat, re.I)).first
-            if btn.count() and btn.is_visible():
-                human_delay(cfg, "apply")
-                btn.click(timeout=5000)
-                _d(f"CLICK {label} pattern={pat!r}")
-                return True
+            if not (btn.count() and btn.is_visible()):
+                continue
+            # Submit can stay disabled while the page validates the form.
+            deadline = time.monotonic() + 15
+            while time.monotonic() < deadline:
+                if btn.is_enabled():
+                    human_delay(cfg, "apply")
+                    btn.click(timeout=5000)
+                    _d(f"CLICK {label} pattern={pat!r}")
+                    return True
+                time.sleep(0.5)
+            _d(f"button_still_disabled {label} pattern={pat!r}")
         except Exception as exc:
             _d(f"click_error {label} {type(exc).__name__}: {exc}")
     return False
