@@ -116,7 +116,7 @@ Personal-use, **CLI-only** bot for **Indeed Hong Kong** (`hk.indeed.com`) that:
 - Verified end-to-end via CDP-attached real Chrome: 30 jobs scraped, one live application submitted and confirmed in Indeed's Applied list.
 - Preview-answers mode tested on two jobs; resume-selection and confirmation-detection bugs fixed.
 - Desktop GUI (`bot/gui.py`, `gui_main.py`) implemented; self-test OK; 92 tests pass.
-- GitHub publish pending user sign-in to GitHub Desktop.
+- Published to https://github.com/MrProFlam/indeed-bot (public, sanitized: no .env/profile.txt/data).
 
 ## 6. Handoff rules
 
