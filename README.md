@@ -12,7 +12,7 @@ a **free** OpenRouter model using your own profile text.
 ## Setup
 
 ```powershell
-cd "C:\Users\mrpro\OneDrive\Documents\Default Project\indeed-bot"
+cd "C:\Users\Documents\Default Project\indeed-bot"
 pip install -r requirements.txt
 python -m playwright install chromium
 python -m patchright install chromium
